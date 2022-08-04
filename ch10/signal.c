@@ -24,7 +24,7 @@ int main(int argc, char const *argv[]) {
     {
         puts("wait......");
         sleep(100);  // 在sleep 2秒后由于产生了alarm信号，系统将进程唤醒，并执行timeout函数
-                     // 并且被系统唤醒后不在sleep剩下的98秒
+                     // 并且被系统唤醒后不再执行sleep剩下的98秒
     }
     return 0;
 }
