@@ -13,18 +13,37 @@ void error_handing(char *m) {
     exit(1);
 }
 
+void read_routine(int sock, char *buf) {
+    while (1) {
+        int str_len = read(sock, buf, BUF_SIZE);
+        if (str_len == 0) {
+            return;
+        }
+        buf[str_len] = 0;
+        printf("message from server: %s", buf);
+    }
+}
+
+void write_routine(int sock, char *buf) {
+    while (1) {
+        fgets(buf, BUF_SIZE, stdin);
+        if (!strcmp(buf, "q\n") || !strcmp(buf, "Q\n")) {
+            shutdown(sock, SHUT_WR);
+            return;
+        }
+        write(sock, buf, strlen(buf));
+    }
+}
+
 int main(int argc, char const *argv[]) {
-		
-	int sock, str_len;
 	struct sockaddr_in serv_addr;
-	char message[BUF_SIZE];
 
 	if (argc != 3) {
 		printf("usage: %s <ip> <port>\n", argv[0]);
 		exit(1);
 	}
 
-	sock = socket(PF_INET, SOCK_STREAM, 0);
+	int sock = socket(PF_INET, SOCK_STREAM, 0);
 	if (sock == -1) {
 		error_handing("socket() error! ");
 	}
@@ -36,19 +55,16 @@ int main(int argc, char const *argv[]) {
 
     if (connect(sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) == -1) {
     	error_handing("connect() error! ");  	
-    } else {
-        puts("connected...");
     }
 
-    while(1) {
-        fputs("input message(Q to quit): ", stdout);
-        fgets(message, BUF_SIZE, stdin);
-        if (!strcmp(message, "q\n") || !strcmp(message, "Q\n"))
-            break;
-        write(sock, message, strlen(message));
-        str_len = read(sock, message, BUF_SIZE - 1);
-        message[str_len] = 0;
-        printf("message from server: %s\n", message);
+    pid_t pid = fork();
+
+    char buf[BUF_SIZE];
+
+    if (pid == 0) {
+        write_routine(sock, buf);
+    } else {
+        read_routine(sock, buf);
     }
 
     close(sock);
