@@ -17,7 +17,7 @@ void read_routine(int sock, char *buf) {
     while (1) {
         int str_len = read(sock, buf, BUF_SIZE);
         if (str_len == 0) {
-            return;
+            return;  // 这里的return是退出此函数
         }
         buf[str_len] = 0;
         printf("message from server: %s", buf);
@@ -57,7 +57,7 @@ int main(int argc, char const *argv[]) {
     	error_handing("connect() error! ");  	
     }
 
-    pid_t pid = fork();
+    pid_t pid = fork();  // 父子进程各有一个已经和服务器建立连接的socket
 
     char buf[BUF_SIZE];
 
@@ -67,6 +67,6 @@ int main(int argc, char const *argv[]) {
         read_routine(sock, buf);
     }
 
-    close(sock);
+    close(sock);  // 父子进程都会执行这条语句
 	return 0;
 }

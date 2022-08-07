@@ -65,7 +65,7 @@ int main(int argc, char*argv[]) {
             puts("new client connected! ");
         }
 
-        pid_t pid = fork();
+        pid_t pid = fork();  // 创建子进程
         if (pid == -1) {
             close(clnt_sock);
             continue;
@@ -74,15 +74,16 @@ int main(int argc, char*argv[]) {
         int str_len;  // 记录从clnt sock读取的字节长度
         char buf[BUF_SIZE];  // 存储从clnt sock读取的数据
         if (pid == 0) {  // 子进程执行模块
-            close(serv_sock);
+            close(serv_sock);  // 子进程复制了来自父进程的两个socket
+                               // 但是子进程只负责clnt sock，所以要把serv sock关闭
             while ((str_len = read(clnt_sock, buf, BUF_SIZE)) != 0) {
                 write(clnt_sock, buf, str_len);
             }
-            close(clnt_sock);
+            close(clnt_sock);  // 业务完毕后，关闭clnt sock
             puts("client disconnected! ");
-            return 0;
+            return 0;  // 子进程终止，会调用僵尸进程处理器，释放子进程所分配到的内存
         } else {
-            close(clnt_sock);
+            close(clnt_sock);  // 父进程关闭clnt cock，只保留serv sock，进入循环继续accept
         }
     }
 
