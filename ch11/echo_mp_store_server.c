@@ -18,7 +18,13 @@ void error_handing(char *m) {
 void read_child_process(int sig) {
     int status;
     pid_t pid = waitpid(-1, &status, WNOHANG);
-    printf("removed pid = %d\n", pid);
+    if (WEXITSTATUS(status) == 1) {
+        printf("process file closed! removed pid = %d \n", pid);
+    } else if (WEXITSTATUS(status) == 2) {
+        printf("process echo closed! removed pid = %d \n", pid);
+    } else {
+        printf("removed pid = %d \n", pid);
+    }
 }
 
 int main(int argc, char*argv[]) {
@@ -30,7 +36,7 @@ int main(int argc, char*argv[]) {
     	exit(1);
     }
 
-    struct sigaction act;  // 处理僵死进程
+    struct sigaction act;  // 僵死进程处理器
     act.sa_handler = read_child_process;
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
@@ -68,7 +74,7 @@ int main(int argc, char*argv[]) {
             fwrite((void*) msgbuf, 1, len, fp);
         }
         fclose(fp);
-        return 0;
+        return 1;
     }
 
     while (1) {
@@ -92,7 +98,7 @@ int main(int argc, char*argv[]) {
             }
             close(clnt_sock);
             puts("client disconnected! ");
-            return 0;
+            return 2;
         } else {
             close(clnt_sock);
         }
