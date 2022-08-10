@@ -69,7 +69,7 @@ int main(int argc, char const *argv[]) {
                     socklen_t addr_size = sizeof(clnt_addr);
                     // 建立连接
                     clnt_sock = accept(serv_sock, (struct sockaddr*) &clnt_addr, &addr_size);
-                    FD_SET(clnt_sock, &reads);  // 并将clnt sock放入监听数组reads
+                    FD_SET(clnt_sock, &reads);  // 并将clnt sock放入监听数组reads，注意这里是原来的reads，不是copy reads
                     if (fd_max < clnt_sock)
                         fd_max = clnt_sock;
                     // fd_max = (fd_max < clnt_sock) ? clnt_sock : fd_max;
