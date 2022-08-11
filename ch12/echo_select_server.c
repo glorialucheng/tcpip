@@ -67,16 +67,16 @@ int main(int argc, char const *argv[]) {
             if (FD_ISSET(i, &copy_reads)) {  // fd为i的流发生了变化
                 if (i == serv_sock) { // 进一步确定i是serv sock还是clnt sock，此处为serv sock，需要建立连接
                     socklen_t addr_size = sizeof(clnt_addr);
-                    // 建立连接
+                    // 仅仅建立连接，不完成逻辑代码
                     clnt_sock = accept(serv_sock, (struct sockaddr*) &clnt_addr, &addr_size);
-                    FD_SET(clnt_sock, &reads);  // 并将clnt sock放入监听数组reads
+                    FD_SET(clnt_sock, &reads);  // 并将clnt sock放入监听数组reads，注意这里是原来的reads，不是copy reads
                     if (fd_max < clnt_sock)
                         fd_max = clnt_sock;
                     // fd_max = (fd_max < clnt_sock) ? clnt_sock : fd_max;
                     printf("connected client: %d\n", clnt_sock);
                     
                 } else {  // 到这里则是监听到clnt sock流发生变化，这个值为i，是OS分配的
-                    // 从clnt sock里读写数据
+                    // 处理客户端的请求的逻辑代码，即从clnt sock里读写数据
                     str_len = read(i, buf, BUF_SIZE);
                     if (str_len == 0) {
                         // 客户端关闭连接，则将此socket关闭，并从reads中清除
@@ -87,7 +87,7 @@ int main(int argc, char const *argv[]) {
                         write(i, buf, str_len);
                     }
 
-                }
+                }  // else
             }  // if
 
         } // for
