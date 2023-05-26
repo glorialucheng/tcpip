@@ -39,11 +39,17 @@
 2. 一般用于服务端将创建的套接字绑定到本地，返回0或-1表示绑定成功或失败
 3. 注意第二个参数是struct sockaddr类型的常量指针，但我们一般新建struct sockaddr_in类型的对象再转换为struct sockaddr类型的指针
 4. 第三个参数表示地址参数的长度，一般取sizeof(address)
-#### listen(sockfd, MAXLINK)函数
+#### listen(sockfd, 10)函数
 1. 定义在sys/socket.h头文件内，原型为int listen(int sockfd, int backlog)，返回0表示成功，-1表示失败
-2. 
+2. 可以理解成将第一个参数的socket设置为“被动状态”，使该socket成为一个服务进程，可以接受其他socket的请求，因此用在服务端
+3. 第二个参数可以理解成内核的处理请求队列的最大长度，一般小于30，也可以取值SOMAXCONN表示由系统决定（一般比较大）
 #### signal(SIGINT, stopServerRunning)函数
+1. pass
 #### accept(sockfd, NULL, NULL)函数
+1. 函数原型为int accept(int sock, struct sockaddr \*addr, socklen_t \*addrlen);
+2. 返回一个新的套接字来和客户端通信，addr保存了客户端的IP地址和端口号，而sock是服务器端的套接字
+3. listen函数只是让套接字进入监听状态，并没有真正接收客户端请求，listen后面的代码会继续执行，直到遇到accept()
+4. accept函数会阻塞程序执行（后面代码不能被执行），直到有新的请求到来
 #### recv(connfd, buff, BUFFSIZE - 1, 0)函数
 #### send(connfd, buff, strlen(buff), 0)函数
 #### close(connfd)函数
