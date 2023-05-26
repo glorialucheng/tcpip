@@ -43,13 +43,51 @@
 1. 定义在sys/socket.h头文件内，原型为int listen(int sockfd, int backlog)，返回0表示成功，-1表示失败
 2. 可以理解成将第一个参数的socket设置为“被动状态”，使该socket成为一个服务进程，可以接受其他socket的请求，因此用在服务端
 3. 第二个参数可以理解成内核的处理请求队列的最大长度，一般小于30，也可以取值SOMAXCONN表示由系统决定（一般比较大）
-#### signal(SIGINT, stopServerRunning)函数
-1. pass
-#### accept(sockfd, NULL, NULL)函数
+#### accept(fd, NULL, NULL)函数
 1. 函数原型为int accept(int sock, struct sockaddr \*addr, socklen_t \*addrlen);
-2. 返回一个新的套接字来和客户端通信，addr保存了客户端的IP地址和端口号，而sock是服务器端的套接字
+2. 返回一个新的套接字来和客户端通信，第二个参数addr用来保存客户端的IP地址和端口号，而第一个参数sock是服务器端的套接字
 3. listen函数只是让套接字进入监听状态，并没有真正接收客户端请求，listen后面的代码会继续执行，直到遇到accept()
 4. accept函数会阻塞程序执行（后面代码不能被执行），直到有新的请求到来
-#### recv(connfd, buff, BUFFSIZE - 1, 0)函数
-#### send(connfd, buff, strlen(buff), 0)函数
-#### close(connfd)函数
+5. 注意返回值为新的套接字，用于和客户端进行通信，但是用于listen的那个套接字仍然在监听是否有请求
+#### recv(fd, buff, BUFFSIZE - 1, 0)函数
+1. 定义在sys/socket.h头文件里面，函数原型为ssize_t recv(int sockfd, void \*buff, size_t nbytes, int flags);
+2. 作用是将第一个参数的套接字里的接收缓冲区中的数据复制到第二个参数指向的内存中，返回实际复制到的字节数
+3. 第四个参数一般为0
+4. 当该套接字的接收缓冲区里面的数据长度大于第三个参数时，recv没能将缓冲区的数据完全复制完，需要多次recv
+#### send(fd, buff, strlen(buff), 0)函数
+1. 类似于recv函数，原型为ssize_t send(int socket, const void \*buf, size_t len, int flags);
+2. 将第二个参数指向的内存的数据复制到第一个参数的套接字的发送缓冲区，返回实际复制到的字节数
+3. 第四个参数一般为0
+4. 当第三个参数大于该套接字的发送缓冲区长度时，send没有将该内存的数据完全复制到套接字的发送缓冲区，需要多次send
+#### close(fd)函数
+1. 关闭该socket
+#### inet_pton
+1. 定义在arpa/inet.h头文件中，函数原型为int inet_pton(int af, const char \*s, void \*dst);
+2. 作用是将第二个参数指向的字符串即十进制点分IP地址转换为二进制网络地址，存在第三个参数的内存里
+3. 第一个参数只能是AF_INET或AF_INET6，表示协议族
+4. 返回1表示转换成功，否则转换失败
+#### inet_ntop
+1. 定义在arpa/inet.h头文件，函数原型为const char \*inet_ntop(int af, const void \*src, char \*dst, socklen_t size);
+2. 与inet_pton相反，将第二个参数指向的IP地址从二进制转换为点分十进制，存在dst指向的内存中，该内存大小可由第四个参数设置
+3. 第一个参数只能是AF_INET或AF_INET6，表示协议族
+4. 返回指向dst所指向的内存的常量指针
+
+#### inet_aton
+1. 函数原型int inet_aton(const char \*cp, struct in_addr \*inp);
+2. 将第一个参数指向的点分十进制IPV4地址转为二进制网络地址，存在第二个参数指向的内存中
+3. 转换成功返回非0，失败返回0
+4. 第二个参数可以为NULL，则仅仅检查第一个参数指向的的IPV4地址是否合法，而不存储结果
+5. 仅适用于IPV4，一般用inet_pton，因为inet_pton适用于IPV4和IPV6
+
+#### inet_ntoa
+1. 函数原型为char \*inet_ntoa(struct in_addr in);
+2. 将IPV4地址转换为十进制点分地址
+3. 第一个参数为需要转换的IPV4地址，注意不是指针
+4. 返回值为转换后的结果的静态内存地址（容易被覆盖）
+5. 仅适用于IPV4，一般用inet_ntop，因为inet_ntop适用于IPV4和IPV6，并且返回结果不会被覆盖
+
+#### inet_addr
+1. 函数原型为in_addr_t inet_addr(const char \*cp);
+2. 作用类似于inet_aton函数，但是参数和返回值不同
+3. 返回转换后的二进制网络地址本身（struct in_addr_t类型）
+4. 仅适用于IPV4，一般用inet_pton替代
