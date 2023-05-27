@@ -3,7 +3,7 @@
 
 int main(int argc, char const *argv[]) {
     pid_t pid = fork();
-    if (pid == 0) {
+    if (pid == 0) {  // 子进程
         puts("child process");
     } else {
         printf("parent process, child process pid = %d \n", pid);
