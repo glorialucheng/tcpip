@@ -28,8 +28,9 @@
 #### socket(AF_INET, SOCK_STREAM, 0)函数
 1. 定义在sys/socket.h头文件里面，函数原型为int socket(int af, int type, int protocol);返回文件描述符
 2. 参数af即地址族（同上述的sin_family），type表示套接字类型，取值SOCK_STREAM（流格式套接字/面向连接的套接字） 和 SOCK_DGRAM（数据报套接字/无连接的套接字）
-3. 参数protocol表示传输协议类型，如IPPROTO_TCP和IPPTOTO_UDP，分别表示TCP传输协议和UDP传输协议
-4. 一般情况下根据前两个参数可以推算出第三个参数（即TCP或UDP），所以第三个参数通常为0
+3. 第一个参数的取值为PF_INET或者AF_INET，两者有细微差别
+4. 参数protocol表示传输协议类型，如IPPROTO_TCP和IPPTOTO_UDP，分别表示TCP传输协议和UDP传输协议
+5. 一般情况下根据前两个参数可以推算出第三个参数（即TCP或UDP），所以第三个参数通常为0
 #### bzero和memset函数
 1. 都定义在sting.h头文件里面，函数原型分别为 void bzero(void \*s, int n);和void \*memset(void \*s,int c,size_t n);
 2. 两个函数都是对第一个参数指向内存进行操作，bzero为将s指向的内存前n个字节用0填充，而memset是将前n个字节用参数c填充
