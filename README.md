@@ -62,7 +62,7 @@
 4. 当第三个参数大于该套接字的发送缓冲区长度时，send没有将该内存的数据完全复制到套接字的发送缓冲区，需要多次send
 #### write和read函数
 1. 这两个函数的作用比recv和send函数大
-2. recv和send是仅仅对socket起作用的读写函数，而write和read是对广泛的文件描述符都能起作用
+2. recv和send是仅仅对socket起作用的读写函数，而write和read是对广泛的文件描述符都能进行读写操作
 3. 其他用法大致相同
 #### close(fd)函数
 1. 关闭该socket
