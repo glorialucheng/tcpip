@@ -96,3 +96,7 @@
 2. 作用类似于inet_aton函数，但是参数和返回值不同
 3. 返回转换后的二进制网络地址本身（struct in_addr_t类型）
 4. 仅适用于IPV4，一般用inet_pton替代
+#### alarm函数
+1. 函数原型为unsigned int alarm(unsigned int seconds);
+2. 在seconds秒后向内核向当前进程发送一个SIGALRM信号
+3. 进程收到该信号，默认动作终止，每个进程都有且只有唯一的一个定时器
