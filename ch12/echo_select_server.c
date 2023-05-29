@@ -43,9 +43,9 @@ int main(int argc, char const *argv[]) {
 
     int fd_max = serv_sock;
     int str_len, fd_num;
-    fd_set reads, copy_reads;
+    fd_set reads, copy_reads;  // 实质上就是一个二进制数组，即[0, 0, 1, 0...]
     FD_ZERO(&reads);
-    FD_SET(serv_sock, &reads);  // 需要监听serv sock，以建立连接
+    FD_SET(serv_sock, &reads);  // 需要监听serv sock，以建立连接，将reads数组下标为serv_sock的位置设置为1
     
     struct timeval timeout;
     char buf[BUF_SIZE];
