@@ -82,6 +82,7 @@ int main(int argc, char*argv[]) {
             close(clnt_sock);  // 业务完毕后，关闭clnt sock
             puts("client disconnected! ");
             return 0;  // 子进程终止，会调用僵尸进程处理器，释放子进程所分配到的内存
+            // 这句return非常重要
         } else {
             close(clnt_sock);  // 父进程关闭clnt cock，只保留serv sock，进入循环继续accept
         }
