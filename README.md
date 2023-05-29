@@ -3,7 +3,7 @@
 1. OS: CentOS 7
 2. 编译器 GCC 4.8 
 
-### 基本知识点
+### Socket基本知识
 #### struct sockaddr_in 结构体
 1. 定义在netinet/in.h或arpa/inet.h头文件里面
 2. 包含的属性：
@@ -100,3 +100,13 @@
 1. 函数原型为unsigned int alarm(unsigned int seconds);
 2. 在seconds秒后向内核向当前进程发送一个SIGALRM信号
 3. 进程收到该信号，默认动作终止，每个进程都有且只有唯一的一个定时器
+
+### Linux/Unix基本知识
+#### fopen和open函数
+1. fopen是ANSIC标准中的C语言库函数，在不同的系统中应该调用不同的内核api，返回文件指针，函数原型为FILE \*fopen(const char \*filename, const char \*mode)
+2. open是UNIX/Linux系统调用函数，返回的是文件描述符
+3. open的两个函数原型为int open(const char \*pathname, int flags);和int open(const char \*pathname, int flags, mode_t mode);
+4. fopen是有缓冲区的高级IO函数，运行在用户态。但是open没有缓冲区是一个低级IO函数，运行在内核态
+5. 类似的有fopen, fclose, fread, fwrite, fgetc, fputc, fgets, fputs和open, close, read, write, getc, putc, getchar, putchar等
+#### 
+
