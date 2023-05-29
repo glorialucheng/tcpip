@@ -4,7 +4,7 @@
 #define BUF_SIZE 30
 
 int main(int argc, char const *argv[]) {
-    int fds1[2]， fds2[2];
+    int fds1[2], fds2[2];
     char str1[] = "hello! ";
     char str2[] = "baye! ";
 
