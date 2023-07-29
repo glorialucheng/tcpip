@@ -28,28 +28,28 @@ pthread_t thid;
 int main() {
 	// 启动10个线程，线程数比cpu核数略多。
 	for (int ii=0;ii<10;ii++) {
-    	pthread_create(&thid,NULL,thmain,(void *)(long)ii);
-    	vth.push_back(thid);
+    		pthread_create(&thid,NULL,thmain,(void *)(long)ii);
+		vth.push_back(thid);
 	}
 	int serv_sock, clnt_sock;
-    struct sockaddr_in serv_addr, clnt_addr;
-    serv_sock = socket(PF_INET, SOCK_STREAM, 0);
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(atoi("5555"));
+	struct sockaddr_in serv_addr, clnt_addr;
+	serv_sock = socket(PF_INET, SOCK_STREAM, 0);
+	memset(&serv_addr, 0, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serv_addr.sin_port = htons(atoi("5555"));
 
-    bind(serv_sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr));
-    listen(serv_sock, 5);
-    socklen_t addr_size = sizeof(clnt_addr);
+	bind(serv_sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr));
+	listen(serv_sock, 5);
+	socklen_t addr_size = sizeof(clnt_addr);
 	
 	while(true) {
 		clnt_sock = accept(serv_sock, (struct sockaddr*) &clnt_addr, &addr_size);
 		
 		pthread_mutex_lock(&mutex);  // 加锁。
 		sockqueue.push_back(clnt_sock); // 把客户端的sock放入队列。
-    	pthread_mutex_unlock(&mutex); // 解锁。
-    	pthread_cond_signal(&cond);   // 触发条件，激活一个线程。
+		pthread_mutex_unlock(&mutex); // 解锁。
+		pthread_cond_signal(&cond);   // 触发条件，激活一个线程。
 	}
 }
 
@@ -70,7 +70,7 @@ void * thmain(void * arg) {
 		pthread_mutex_lock(&mutex);  // 加锁。
 
 		// 如果队列为空，等待。 
-    	while (sockqueue.size() == 0) {
+    		while (sockqueue.size() == 0) {
 			// 设置线程超时间为20秒。
 			struct timeval now;
 			struct timespec outtime;
